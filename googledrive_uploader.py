@@ -1,49 +1,18 @@
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-import pickle
-import os
-from dotenv import load_dotenv
+import google.auth
+import google_auth_oauthlib.flow
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
-# Load environment variables from .env file
-load_dotenv()
+# Path to your OAuth 2.0 credentials file
+CLIENT_SECRETS_FILE = "client_secret_1005985003754-346uaprpsccoueoip1gm6cd6rsbtk4ha.apps.googleusercontent.com.json"
 
+# Scopes for Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
-def authenticate_google_drive():
-    creds = None
-    # Load environment variables
-    client_id = os.getenv("CLIENT_ID")
-    client_secret = os.getenv("CLIENT_SECRET")
-    
-    # Check for existing credentials
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-
-    # If there are no valid credentials, prompt for login
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_config({
-                "installed": {
-                    "client_id": client_id,
-                    "client_secret": client_secret,
-                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                    "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob", "http://localhost"]
-                }
-            }, SCOPES)
-            creds = flow.run_local_server(port=0)
-        
-        # Save the credentials for future runs
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
-
-    return creds
-
-credentials = authenticate_google_drive()
-
+# Authentication flow to get credentials
+flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
+    CLIENT_SECRETS_FILE, SCOPES)
+credentials = flow.run_local_server(port=0)
 
 # Build the Google Drive API service
 drive_service = build('drive', 'v3', credentials=credentials)
