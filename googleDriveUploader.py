@@ -37,7 +37,7 @@ else:
     # Folder exists, retrieve its ID
     folder_id = folder[0].get('id')
 
-def uploadBookToGoogleDrive(bookTitle, bookFilepath):
+def upload_book_to_google_drive(bookTitle, bookFilepath):
     file_metadata = {
         'name': bookTitle + '.epub', 
         'parents': [folder_id]  # Specify the folder ID
