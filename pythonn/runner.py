@@ -1,28 +1,34 @@
 from flask import Flask, request, jsonify
+import os
 
 app = Flask(__name__)
 
-@app.route('/upload_epub', methods=['POST'])
-def upload_epub():
-    pirateBook()
-    return jsonify({"message": "EPUB uploaded successfully!"})
+@app.route('/pirate', methods=['POST'])
+def find_service():
+    data = request.json
+    Title = data.get('Title')
+    AuthorLastName = data.get('AuthorLastName')
+
+    # Process the data
+    print(f"Received: Title = {Title}, AuthorLastName = {AuthorLastName}")
+
+    response = sayHi()
+
+    return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
+
+def sayHi():
+    return "Hi!"
 
 
 
 
-
-
-
-
-
-
+"""
 def pirateBook():
 
-
-    print('\n\nCheck your browser to allow FreeBooks to upload books to Google Drive.\n\n'.upper())
 
     from link_retriever import search_libgen
     from googledrive_uploader import uploadBookToGoogleDrive
@@ -54,4 +60,4 @@ def pirateBook():
                 \n2. Press \'Upload files\'. \
                 \n3. Press \'Google Drive\'. \
                 \n4. In the search bar, type your desired book.\
-                \n5. Double press the book and wait for it to process.')
+                \n5. Double press the book and wait for it to process.')"""
